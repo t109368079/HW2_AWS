@@ -57,7 +57,13 @@
 <body>
 
 <div class="login-container">
-    <h2>Login</h2>
+    <h2>Sign in or Sign up </h2>
+    <h5>If username not exist, will direct to sign up page</h5>
+
+    {% if warning_message %}
+        <p style="color: red;">{{ warning_message }}</p>
+    {% endif %}
+    
     <form action="#" method="post">
         <div class="form-group">
             <label for="username">Username:</label>

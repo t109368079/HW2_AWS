@@ -27,14 +27,19 @@ def home():
         pw = request.form['password']
         
         if usr in data.keys():
-            return redirect(url_for('display',usr=usr))
+            usr_pw = data[usr]['pw']
+            if pw == usr_pw:
+                return redirect(url_for('display',usr=usr))
+            else:
+                message = 'Incorrect username or password. Please try again.'
+                return render_template('index.html', warning_message=message)
         else:
             user_info = {'pw':pw}
             data.update({usr:user_info})
             save_data(data)
             return redirect(url_for('user', usr=usr))
     else:
-        return render_template('index.html')
+        return render_template('index.html', warning_message=None)
     
 @app.route('/user_<usr>', methods=['POST', 'GET'])
 def user(usr):
@@ -50,18 +55,20 @@ def user(usr):
     else:
         return render_template('user_detail.html')
 
-@app.route('/display_<usr>')
+@app.route('/display_<usr>',methods=['POST', 'GET'])
 def display(usr):
-    data = load_data()
-    user_info = data[usr]
     
-    first_name = user_info['first_name']
-    last_name = user_info['last_name']
-    email = user_info['email']
-    
-    text = f"<h1>First Name: {first_name}<br>Last Name: {last_name}<br>Email: {email}</h1>"
-                
-    return text
+    if request.method == 'POST':
+        return redirect(url_for('home'))
+    else:
+        data = load_data()
+        user_info = data[usr]
+        
+        first_name = user_info['first_name']
+        last_name = user_info['last_name']
+        email = user_info['email']
+
+        return render_template('display.html', first_name=first_name, last_name=last_name, email=email)
            
 
 
